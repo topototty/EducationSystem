@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 style="text-align: center;">{{ user.username }}</h1>
+    <h2 style="text-align: center">{{ welcome_message }}</h2>
+    <h2 style="text-align: center">Должность: {{ request.user.groups.first }}</h2>
+    {% if request.user.groups.first.name == "Преподаватель" %}
+        <div class="text-center">
+            <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#addRequestModal"
+               style="margin-top: 20px; background: #163952; border: none; border-radius: 80px; width: 220px">
+                Отправить запрос
+            </a>
+        </div>
+
+        <div class="modal fade" id="addRequestModal" tabindex="-1" role="dialog" aria-labelledby="addRequestModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addRequestModalLabel">Добавить запрос</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'add_request' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="employee">Сотрудник:</label>
+                                <select class="form-control" id="employee" name="employee" required>
+                                    {% for employee in employees %}
+                                        <option value="{{ employee.pk }}">{{ employee.first_name }} {{ employee.last_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="lesson">Урок:</label>
+                                <select class="form-control" id="lesson" name="lesson" required>
+                                    {% for lesson in lessons %}
+                                        <option value="{{ lesson.pk }}">{{ lesson }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="lesson_status">Статус занятия:</label>
+                                <select class="form-control" id="lesson_status" name="lesson_status" required>
+                                    <option value="1">Назначено</option>
+                                    <option value="0">Отменено</option>
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="submit" class="btn btn-primary">Добавить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock content %}

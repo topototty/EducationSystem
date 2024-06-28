@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/login_style.css' %}">
+
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="mb-4">Авторизация</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" id="id_username" name="username"
+                           placeholder="Введите имя пользователя">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="id_password" name="password"
+                           placeholder="Введите пароль">
+                </div>
+                <button type="submit" class="btn btn-primary">Войти</button>
+            </form>
+
+            <a href="{% url 'registration' %}" class="reg-link">У меня нет аккаунта!</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="d-inline-block" style="text-align: center; margin-bottom: 20px">Запросы</h2>
+
+        <table id="requestTable" class="table table-bordered table-hover" style="margin: 0;">
+            <thead>
+            <tr style="text-align: center">
+                <th>Сотрудник</th>
+                <th>Урок</th>
+                <th>Статус занятия</th>
+                <th>Статус запроса</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for request in requests %}
+                <tr style="text-align: center;">
+                    <td>{{ request.employee }}</td>
+                    <td>{{ request.lesson }}</td>
+                    <td>
+                        {% if request.lesson_status %}
+                            <span style="color: #212529; background: #f2f2f2; border-radius: 10px; padding: 5px 10px">Назначено</span>
+                        {% else %}
+                            <span style="color: #212529; background: rgb(241,132,132); border-radius: 10px; padding: 5px">Отменено</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if request.request_status %}
+                            <span style="color: #212529; background: #f2f2f2; border-radius: 10px; padding: 5px 10px">Принят</span>
+                        {% else %}
+                            <span style="color: #212529; background: rgb(241,132,132); border-radius: 10px; padding: 5px">На рассмотрении</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock content %}

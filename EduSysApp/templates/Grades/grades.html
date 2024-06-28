@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="d-inline-block" style="text-align: center; margin-bottom: 20px">Оценки</h2>
+
+        <table id="gradeTable" class="table table-bordered table-hover" style="margin: 0;">
+            <thead>
+            <tr style="text-align: center">
+                <th>Студент</th>
+                <th>Преподаватель</th>
+                <th>Предмет</th>
+                <th>Оценка</th>
+                <th>Дата</th>
+                <th>Изменить</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for grade in grades %}
+                <tr style="text-align: center;">
+                    <td>{{ grade.student }}</td>
+                    <td>{{ grade.employee }}</td>
+                    <td>{{ grade.subject }}</td>
+                    <td>{{ grade.grade_value }}</td>
+                    <td>{{ grade.grade_date }}</td>
+                    <td>
+                        <a type="button" data-toggle="modal" data-target="#editGradeModal{{ grade.grade_id }}"><i
+                                class="fas fa-edit"
+                                style="color: black"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGradeModal"
+           style="margin-top: 20px; background: #163952; border: none; border-radius: 80px; width: 220px">
+            Добавить оценку
+        </a>
+    </div>
+
+    <div class="modal fade" id="addGradeModal" tabindex="-1" role="dialog" aria-labelledby="addGradeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addGradeModalLabel">Добавление оценки</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'add_grade' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="student">Студент:</label>
+                            <select class="form-control" id="student" name="student" required>
+                                {% for student in students %}
+                                    <option value="{{ student.pk }}">{{ student.last_name }} {{ student.first_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="employee">Сотрудник:</label>
+                            <select class="form-control" id="employee" name="employee" required>
+                                {% for employee in employees %}
+                                    {% if employee.user == current_user %}
+                                        <option value="{{ employee.pk }}"
+                                                selected>{{ employee.last_name }} {{ employee.first_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Предмет:</label>
+                            <select class="form-control" id="subject" name="subject" required>
+                                {% for subject in subjects %}
+                                    <option value="{{ subject.pk }}">{{ subject.subject_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="grade_value">Оценка:</label>
+                            <input type="text" class="form-control" id="grade_value" name="grade_value" pattern="[2-5]"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="grade_date">Дата:</label>
+                            <input type="date" class="form-control" id="grade_date" name="grade_date" max="{{ today }}"
+                                   required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% for grade in grades %}
+        <div class="modal fade" id="editGradeModal{{ grade.grade_id }}" tabindex="-1" role="dialog"
+             aria-labelledby="editGradeModalLabel{{ grade.grade_id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editGradeModalLabel">Изменение оценки</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'edit_grade' grade.pk %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="student">Студент:</label>
+                                <select class="form-control" id="student" name="student" required>
+                                    {% for student in students %}
+                                        <option value="{{ student.pk }}" {% if student.pk == grade.student.pk %}
+                                                selected {% endif %}>{{ student.last_name }} {{ student.first_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="employee">Сотрудник:</label>
+                                <select class="form-control" id="employee" name="employee" required>
+                                    {% for employee in employees %}
+                                        {% if employee.user == current_user %}
+                                            <option value="{{ employee.pk }}"
+                                                    selected>{{ employee.last_name }} {{ employee.first_name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Предмет:</label>
+                                <select class="form-control" id="subject" name="subject" required>
+                                    {% for subject in subjects %}
+                                        <option value="{{ subject.pk }}" {% if subject.pk == grade.subject.pk %}
+                                                selected {% endif %}>{{ subject.subject_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="grade_value">Оценка:</label>
+                                <input type="text" class="form-control" id="grade_value" name="grade_value"
+                                       value="{{ grade.grade_value }}" pattern="[2-5]" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="grade_date">Дата:</label>
+                                <input type="date" class="form-control" id="grade_date" name="grade_date"
+                                       value="{{ grade.grade_date }}" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock content %}

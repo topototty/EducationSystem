@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="d-inline-block" style="margin-bottom: 30px;text-align: center;">Студенты</h2>
+        <div class="d-inline-block float-right" style="margin-left: 20px">
+            <select id="groupFilter" class="form-control" style="width: 200px">
+                <option value="">Выберите группу</option>
+                {% for group in groups %}
+                    <option value="{{ group.pk }}">{{ group.group_number }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="d-inline-block float-right" style="margin-left: 20px">
+            <button id="sortAsc" class="btn btn-primary"
+                    style="background: #163952; border: none; border-radius: 80px; width: 70px">
+                а-я
+            </button>
+            <button id="sortDesc" class="btn btn-primary"
+                    style="background: #163952; border: none; margin-left: 10px; border-radius: 80px; width: 70px">
+                я-а
+            </button>
+        </div>
+        <table id="studentTable" class="table table-bordered table-hover" style="margin: 0">
+            <thead>
+            <tr style="text-align: center">
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Отчество</th>
+                <th>Номер телефона</th>
+                <th>Email</th>
+                <th>Группа</th>
+                <th>Изменить</th>
+                <th>Удалить</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for student in students %}
+                <tr style="text-align: center">
+                    <td>{{ student.first_name }}</td>
+                    <td>{{ student.last_name }}</td>
+                    <td>{{ student.middle_name }}</td>
+                    <td>{{ student.phone_number }}</td>
+                    <td>{{ student.email }}</td>
+                    <td data-group-id="{{ student.group.pk }}">{{ student.group.group_number }}</td>
+                    <td>
+                        <a type="button" data-toggle="modal" data-target="#editModal{{ student.student_id }}"><i
+                                class="fas fa-edit"
+                                style="color: black"></i></a>
+                    </td>
+                    <td>
+                        <a type="button" data-toggle="modal" data-target="#deleteModal{{ student.student_id }}"><i
+                                class="fas fa-trash"
+                                style="color: black"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
+           style="margin-top: 20px; background: #163952; border: none; border-radius: 80px; width: 220px">
+            Добавить запись
+        </a>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Добавление записи</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'add_student' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_first_name">Имя:</label>
+                            <input type="text" class="form-control" id="id_first_name" name="first_name"
+                                   placeholder="Введите имя" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_last_name">Фамилия:</label>
+                            <input type="text" class="form-control" id="id_last_name" name="last_name"
+                                   placeholder="Введите фамилию" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_middle_name">Отчество:</label>
+                            <input type="text" class="form-control" id="id_middle_name" name="middle_name"
+                                   placeholder="Введите отчество (необязательно)">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_phone_number">Номер телефона:</label>
+                            <input type="text" class="form-control" id="id_phone_number" name="phone_number"
+                                   placeholder="Введите номер телефона (необязательно)">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_email">Email:</label>
+                            <input type="email" class="form-control" id="id_email" name="email"
+                                   placeholder="Введите email (необязательно)">
+                        </div>
+                        <div class="form-group">
+                            <label for="group">Группа:</label>
+                            <select class="form-control" id="group" name="group" required>
+                                {% for group in groups %}
+                                    <option value="{{ group.pk }}">{{ group.group_number }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% for student in students %}
+        <div class="modal fade" id="deleteModal{{ student.student_id }}" tabindex="-1" role="dialog"
+             aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Подтверждение удаления</h5>
+                    </div>
+                    <div class="modal-body">
+                        Вы уверены, что хотите удалить студента "{{ student.first_name }} {{ student.last_name }}"?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                        <form method="post" action="{% url 'delete_student' student.student_id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Удалить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% for student in students %}
+        <div class="modal fade" id="editModal{{ student.student_id }}" tabindex="-1" role="dialog"
+             aria-labelledby="editModalLabel{{ student.student_id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel{{ student.student_id }}">Изменение записи</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'edit_student' student.student_id %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="first_name">Имя:</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name"
+                                       value="{{ student.first_name }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="last_name">Фамилия:</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name"
+                                       value="{{ student.last_name }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="middle_name">Отчество:</label>
+                                <input type="text" class="form-control" id="middle_name" name="middle_name"
+                                       value="{{ student.middle_name }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone_number">Номер телефона:</label>
+                                <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                       value="{{ student.phone_number }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="{{ student.email }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="group">Группа:</label>
+                                <select class="form-control" id="group" name="group">
+                                    {% for group in groups %}
+                                        <option value="{{ group.pk }}" {% if group.pk == student.group.pk %}
+                                                selected {% endif %}>{{ group.group_number }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var sortAscButton = document.getElementById("sortAsc");
+            var sortDescButton = document.getElementById("sortDesc");
+
+            sortAscButton.addEventListener("click", function () {
+                sortTable(true);
+            });
+
+            sortDescButton.addEventListener("click", function () {
+                sortTable(false);
+            });
+
+            function sortTable(asc) {
+                var tbody = document.querySelector("#studentTable tbody");
+                var rows = Array.from(tbody.querySelectorAll("tr"));
+
+                rows.sort(function (a, b) {
+                    var nameA = a.cells[0].textContent.trim().toLowerCase();
+                    var nameB = b.cells[0].textContent.trim().toLowerCase();
+
+                    if (asc) {
+                        return nameA.localeCompare(nameB);
+                    } else {
+                        return nameB.localeCompare(nameA);
+                    }
+                });
+
+                rows.forEach(function (row) {
+                    tbody.appendChild(row);
+                });
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var groupFilterSelect = document.getElementById("groupFilter");
+            groupFilterSelect.addEventListener("change", function () {
+                filterTableByGroup(this.value);
+            });
+
+            function filterTableByGroup(groupId) {
+                var rows = document.querySelectorAll("#studentTable tbody tr");
+                rows.forEach(function (row) {
+                    var groupCell = row.querySelector("td:nth-child(6)");
+                    if (groupId === "" || groupCell.dataset.groupId === groupId) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock content %}

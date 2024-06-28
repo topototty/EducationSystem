@@ -1,0 +1,52 @@
+<style>
+    nav {
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    .navbar-nav .nav-link {
+        margin-right: 30px;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light" style="background: transparent;">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav text-center">
+            {% if 'Начальник' in user_groups %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'students' %}" style="color: #ECF0F1;">Студенты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'groups' %}" style="color: #ECF0F1;">Группы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'employees' %}" style="color: #ECF0F1;">Сотрудники</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'requests' %}" style="color: #ECF0F1;">Запросы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'lessons' %}" style="color: #ECF0F1;">Занятия</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' user.id %}" style="color: #ECF0F1;">Личный кабинет</a>
+                </li>
+            {% elif 'Преподаватель' in user_groups %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'lessons_for_teacher' %}" style="color: #ECF0F1;">Занятия</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'grades' %}" style="color: #ECF0F1;">Оценки</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' user.id %}" style="color: #ECF0F1;">Личный кабинет</a>
+                </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="btn btn-primary" href="{% url 'logout' %}"
+                   style="width: 100px; border-radius: 80px; background: #ECF0F1; border: none; color: #163952">Выйти</a>
+            </li>
+        </ul>
+    </div>
+</nav>

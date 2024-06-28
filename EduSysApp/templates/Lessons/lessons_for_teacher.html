@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="d-inline-block" style="text-align: center; margin-bottom: 20px">Расписание</h2>
+
+        <table id="lessonTable" class="table table-bordered table-hover" style="margin: 0;">
+            <thead>
+            <tr style="text-align: center">
+                <th>Группа</th>
+                <th>Преподаватель</th>
+                <th>Аудитория</th>
+                <th>Предмет</th>
+                <th>День недели</th>
+                <th>Время начала</th>
+                <th>Время окончания</th>
+                <th>Статус урока</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for lesson in lessons %}
+                <tr style="text-align: center;">
+                    <td>{{ lesson.group.group_number }}</td>
+                    <td>{{ lesson.employee.first_name }} {{ lesson.employee.last_name }}</td>
+                    <td>{{ lesson.room.room_number }}</td>
+                    <td>{{ lesson.subject.subject_name }}</td>
+                    <td>{{ lesson.day_of_week.day_name }}</td>
+                    <td>{{ lesson.start_time|time:"H:i" }}</td>
+                    <td>{{ lesson.end_time|time:"H:i" }}</td>
+                    <td>
+                        {% if lesson.lesson_status %}
+                            <span style="color: #212529; background: #f2f2f2; border-radius: 10px; padding: 5px 10px">Назначено</span>
+                        {% else %}
+                            <span style="color: #212529; background: rgb(241,132,132); border-radius: 10px; padding: 5px">Отменено</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+
+{% endblock content %}

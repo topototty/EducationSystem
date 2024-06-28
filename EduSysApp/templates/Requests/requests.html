@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="d-inline-block" style="text-align: center; margin-bottom: 20px">Запросы</h2>
+
+        <table id="requestTable" class="table table-bordered table-hover" style="margin: 0;">
+            <thead>
+            <tr style="text-align: center">
+                <th>Сотрудник</th>
+                <th>Урок</th>
+                <th>Статус занятия</th>
+                <th>Статус запроса</th>
+                <th>Изменить</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for request in requests %}
+                <tr style="text-align: center;">
+                    <td>{{ request.employee }}</td>
+                    <td>{{ request.lesson }}</td>
+                    <td>
+                        {% if request.lesson_status %}
+                            <span style="color: #212529; background: #f2f2f2; border-radius: 10px; padding: 5px 10px">Назначено</span>
+                        {% else %}
+                            <span style="color: #212529; background: rgb(241,132,132); border-radius: 10px; padding: 5px">Отменено</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if request.request_status %}
+                            <span style="color: #212529; background: #f2f2f2; border-radius: 10px; padding: 5px 10px">Принят</span>
+                        {% else %}
+                            <span style="color: #212529; background: rgb(241,132,132); border-radius: 10px; padding: 5px">На рассмотрении</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a type="button" data-toggle="modal" data-target="#editRequestModal{{ request.request_id }}"><i
+                                class="fas fa-edit"
+                                style="color: black"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% for request in requests %}
+        <div class="modal fade" id="editRequestModal{{ request.request_id }}" tabindex="-1" role="dialog"
+             aria-labelledby="editRequestModalLabel{{ request.request_id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editRequestModalLabel{{ request.request_id }}">Изменение
+                            запроса</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'edit_request' request.pk %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="employee">Сотрудник:</label>
+                                <select class="form-control" id="employee" name="employee">
+                                    {% for employee in employees %}
+                                        <option value="{{ employee.employee_id }}" {% if employee.employee_id == request.employee.employee_id %}
+                                                selected {% endif %}>{{ employee }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="lesson">Урок:</label>
+                                <select class="form-control" id="lesson" name="lesson">
+                                    {% for lesson in lessons %}
+                                        <option value="{{ lesson.pk }}" {% if lesson.pk == request.lesson.pk %}
+                                                selected {% endif %}>{{ lesson }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="lesson_status">Статус занятия:</label>
+                                <select class="form-control" id="lesson_status" name="lesson_status">
+                                    <option value="1" {% if request.lesson_status %} selected {% endif %}>Назначено
+                                    </option>
+                                    <option value="0" {% if not request.lesson_status %} selected {% endif %}>Отменено
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="request_status">Статус запроса:</label>
+                                <select class="form-control" id="request_status" name="request_status">
+                                    <option value="1" {% if request.request_status %} selected {% endif %}>Принят
+                                    </option>
+                                    <option value="0" {% if not request.request_status %} selected {% endif %}>На рассмотрении
+                                    </option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}

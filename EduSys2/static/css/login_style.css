@@ -1,0 +1,42 @@
+body {
+    background-color: #ECF0F1;
+    color: #163952;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-primary {
+    background-color: #163952;
+    border-radius: 50px;
+    color: #fff;
+    border: none;
+    padding: 10px 30px;
+    width: 212px;
+    margin: 0 auto;
+    display: block;
+}
+
+.reg-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #163952;
+    text-decoration: none;
+}
+
+.reg-link:hover {
+    text-decoration: none;
+}
+
+input.form-control {
+    border: none;
+    border-radius: 10px;
+    width: 400px;
+    height: 50px;
+    margin: 0 auto;
+    display: block;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
